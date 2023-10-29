@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Niko's extension",
+  "name": "Elastic Notes",
   "version": "1.0",
-  "description": "A simple web extension.",
+  "description": "Elastic Notes created By Nihat",
   "action": {
     "default_popup": "popup.html"
   },
@@ -11,6 +11,12 @@
     "contextMenus",
     "storage"
   ],
+  "icons": {
+    "16" : "logo1.png",
+    "32" : "logo1.png",
+    "48" : "logo1.png",
+    "128" : "logo1.png"
+  },
   "background": {
     "service_worker": "background.js"
   }
