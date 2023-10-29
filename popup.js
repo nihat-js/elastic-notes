@@ -1,18 +1,33 @@
-// document.getElementById('clickMe').addEventListener('click',  function () {
-//   // alert('Button Clicked!');
-// });
-
-
-document.getElementById("reset").onclick=  async function(){
-  await chrome.storage.local.set({data : ""});
-  alert("Deleted everything");
+const textarea = document.querySelector("textarea")
+textarea.focus()
+document.getElementById("reset").onclick = async function () {
+  await chrome.storage.local.set({ data: "" });
+  textarea.value = ""
 }
 
-async function get() {
-  console.log("started")
+async function load() {
+  console.log("loading...")
   let result = await chrome.storage.local.get("data")
-  document.querySelector("textarea").value = result.data
-  // alert("finished",result.data)
+  textarea.value = result.data
 }
 
-get()
+load()
+
+
+textarea.onkeydown = debouncer(handleTyping,400)
+
+async function handleTyping() {
+  await chrome.storage.local.set({ data: textarea.value })
+}
+
+function debouncer(fn, delay) {
+  let timerId
+  return async function () {
+    if (timerId) {
+      clearInterval(timerId)
+    }
+    timerId = setInterval(() => {
+      fn()
+    }, delay)
+  }
+}

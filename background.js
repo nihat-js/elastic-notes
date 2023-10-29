@@ -1,5 +1,5 @@
 chrome.contextMenus.create({
-  title: "Add to new",
+  title: "Add item",
   id: "add",
   // show the menu over everything
   contexts: ["selection"]
@@ -34,7 +34,7 @@ chrome.contextMenus.onClicked.addListener( async (item,tab) => {
   let result = await chrome.storage.local.get("data")
   // console.log("data",result.data)
   // console.log("item",item.selectionText)
-  let data = result.data + "\n" + item.selectionText
+  let data = result.data + "\n" + `* ${item.selectionText}`
   await chrome.storage.local.set({data})
   console.log("Data is saved",data)
 })
