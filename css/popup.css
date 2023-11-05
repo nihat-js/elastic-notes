@@ -101,3 +101,19 @@ header{
   font-size: 22px;
   align-items: center;
 }
+
+.menu {
+  display: flex;
+  gap : 10px; 
+  margin-bottom:  8px;
+}
+.menu-tab {
+  padding: 6px 4px;
+  cursor: pointer;
+}
+.menu-tab.active{
+  font-weight: bold;
+}
+.menu-tab:hover{
+  transform: scale(1.1);
+}

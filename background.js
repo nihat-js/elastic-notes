@@ -1,42 +1,34 @@
 chrome.contextMenus.create({
-  title: "Add item",
+  title: "Add to list",
   id: "add",
-  // show the menu over everything
   contexts: ["selection"]
   // IMPORTANT: because we are no longer using a
   // persistent background script we will need to
   // add an event listener outside contextMenus.create.
 });
-// chrome.contextMenus.create({
-//   title: "Set Data",
-//   id: "set",
-//   // show the menu over everything
-//   contexts: ["all"]
-//   // IMPORTANT: because we are no longer using a
-//   // persistent background script we will need to
-//   // add an event listener outside contextMenus.create.
-// });
 
 
 
-// console.log(chrome.contextMenus)
+let list = []
 
-
-// chrome.storage.local.set({ "phasersTo": "awesome" }, function(){
-//   //  Data's been saved boys and girls, go on home
-// });
-
-// if (menu.menuItemID == "get"){
-  // }
+async function getList(){
+  try{
+    data = await chrome.storage.local.get("list")
+  }
+  return data
+}
+async function saveList(){
+  await chrome.storage.local.set({list : JSON.stringify(list)})
+}
 
 chrome.contextMenus.onClicked.addListener( async (item,tab) => {
 
-  let result = await chrome.storage.local.get("data")
-  // console.log("data",result.data)
-  // console.log("item",item.selectionText)
-  let data = result.data + "\n" + `* ${item.selectionText}`
-  await chrome.storage.local.set({data})
-  console.log("Data is saved",data)
+  let arr = await getList();
+  arr.unshift(selectionText)
+  await saveList(arr)
+
+  // let data = result.data + "\n" + `* ${item.selectionText}`
+  // console.log("Data is saved",data)
 })
 
 
