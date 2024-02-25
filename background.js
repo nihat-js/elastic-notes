@@ -35,7 +35,7 @@ chrome.commands.onCommand.addListener(function(command) {
       chrome.storage.local.get(['list'], function (result) {
         console.log('Value currently is ' + result.list);
         let data = Array.isArray(result.list) ? result.list : []
-        data.push(item.selectionText)
+        data.unshift(item.selectionText)
     
         chrome.storage.local.set({ list: data }, function () {
           console.log('Value is set to ' + data);
