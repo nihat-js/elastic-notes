@@ -1,3 +1,4 @@
+import { Storage } from "./utils/Storage.js"
 chrome.contextMenus.create({
   title: "Add to list",
   id: "add",
@@ -8,27 +9,39 @@ chrome.contextMenus.create({
 });
 
 
+chrome.contextMenus.onClicked.addListener(async (item, tab) => {
 
-let list = []
+  chrome.storage.local.get(['list'], function (result) {
+    console.log('Value currently is ' + result.list);
+    let data = Array.isArray(result.list) ? result.list : []
+    data.push(item.selectionText)
 
-async function getList(){
-  try{
-    data = await chrome.storage.local.get("list")
-  }
-  return data
-}
-async function saveList(){
-  await chrome.storage.local.set({list : JSON.stringify(list)})
-}
+    chrome.storage.local.set({ list: data }, function () {
+      console.log('Value is set to ' + data);
+    });
 
-chrome.contextMenus.onClicked.addListener( async (item,tab) => {
+  });
 
-  let arr = await getList();
-  arr.unshift(selectionText)
-  await saveList(arr)
-
-  // let data = result.data + "\n" + `* ${item.selectionText}`
-  // console.log("Data is saved",data)
+  // const storage =  new Storage()
+  // await storage.load()
+  // await storage.push(item.selectionText)
+  // console.log("clicked", storage,item.selectionText)
+  // console.log(await storage.getList()) 
 })
 
+chrome.commands.onCommand.addListener(function(command) {
+  if (command === "invokeFunction") {
+      // Call your function here
+      chrome.storage.local.get(['list'], function (result) {
+        console.log('Value currently is ' + result.list);
+        let data = Array.isArray(result.list) ? result.list : []
+        data.push(item.selectionText)
+    
+        chrome.storage.local.set({ list: data }, function () {
+          console.log('Value is set to ' + data);
+        });
+    
+      });
+  }
+});
 
