@@ -9,7 +9,8 @@ chrome.contextMenus.create({
 });
 
 
-chrome.contextMenus.onClicked.addListener(async (item, tab) => {
+
+chrome.contextMenus.onClicked.addListener(async (item, tab) => {+
 
   chrome.storage.local.get(['list'], function (result) {
     console.log('Value currently is ' + result.list);
