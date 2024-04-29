@@ -41,16 +41,31 @@ chrome.storage.local.get(['list'], function (result) {
               </div>`
   })
   document.querySelector(".items").innerHTML = html
-  textarea.value = data.join("\n")
+  // textarea.value = data.join("\n")
 });
 
 document.querySelector(".copy-all").onclick = () => {
   copyToClipboard(text)
 }
 
-function copyToClipboard(text) {
-  // Use the Clipboard API to write text to the clipboard
-  navigator.clipboard.writeText(text)
+
+// const copyTextToClipboard = (text,callback) => {
+// 	let textArea = document.createElement("textarea");
+// 	textArea.value = text.trim();
+// 	document.body.appendChild(textArea);
+// 	textArea.select();
+// 	let copy = document.execCommand('copy');
+// 	if (copy) {
+// 		if (typeof callback === "function") {
+// 		callback();
+// 		}
+// 	textArea.remove();
+// 	}
+// };
+
+
+async function copyToClipboard(text) {
+  await navigator.clipboard.writeText(text)
   // .then(() => {
   // console.log('Successfully copied to clipboard.');
   // alert(`Copied to clipboard: ${text}`); // Optional user feedback

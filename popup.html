@@ -1,44 +1,231 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-  <title>Simple Extension</title>
-  <link rel="stylesheet" type="text/css" href="./css/popup.css">
+    <meta charset="UTF-8">
+    <title>Vue 3 Application</title>
+    <script src="https://unpkg.com/vue@3.2.47/dist/vue.global.js"></script> <!-- Vue 3 CDN -->
+    <style>
+        /* Styles for tabs and tab content */
+        .tabs {
+            display: flex;
+            justify-content: space-around;
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .tab {
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        .active {
+            font-weight: bold;
+            border-bottom: 2px solid #007bff;
+        }
+
+        .tab-content {
+            padding: 20px;
+        }
+
+        /* Styles for list items */
+        .list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            margin-bottom: 10px;
+        }
+
+        .copy-btn,
+        .delete-btn {
+            background-color: #007bff;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            cursor: pointer;
+            margin-left: 5px;
+        }
+
+        .delete-btn {
+            background-color: #f44336;
+        }
+
+        /* Styles for notes textarea */
+        .notes-textarea {
+            width: 100%;
+            height: 150px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        /* Styles for timers */
+        .timer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            margin-bottom: 10px;
+        }
+
+        .stop-btn,
+        .resume-btn,
+        .delete-timer-btn {
+            background-color: #007bff;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            cursor: pointer;
+            margin-left: 5px;
+        }
+
+        .delete-timer-btn {
+            background-color: #f44336;
+        }
+    </style>
 </head>
-
 <body>
-  <header>
-    <h2 class="title"> Elastic Notes </h2>
-    <img src="./images/logo1.png" alt="" width="32px">
-  </header>
+    <div id="app">
+        <!-- Tab headers -->
+        <div class="tabs">
+            <div class="tab" :class="{ active: currentTab === 'list' }" @click="currentTab = 'list'">List</div>
+            <div class="tab" :class="{ active: currentTab === 'notes' }" @click="currentTab = 'notes'">Notes</div>
+            <div class="tab" :class="{ active: currentTab === 'timers' }" @click="currentTab = 'timers'">Timers</div>
+            <div class="tab" :class="{ active: currentTab === 'settings' }" @click="currentTab = 'settings'">Settings</div>
+        </div>
 
+        <!-- Tab content -->
+        <div class="tab-content">
+            <!-- List Tab -->
+            <div v-if="currentTab === 'list'">
+                <div v-for="(item, index) in listItems" :key="index" class="list-item">
+                    {{ item }}
+                    <div>
+                        <button class="copy-btn" @click="copyToClipboard(item)">Copy</button>
+                        <button class="delete-btn" @click="deleteListItem(index)">Delete</button>
+                    </div>
+                </div>
+            </div>
 
-  <div class="menu">
-    <p class="menu-tab active" data-tab='list'> List </p>
-    <p class="menu-tab" data-tab='note'> Note </p>
-    <p class="menu-tab" data-tab='timer'> Timer </p>
-  </div>
+            <!-- Notes Tab -->
+            <div v-if="currentTab === 'notes'">
+                <textarea class="notes-textarea" v-model="noteContent" placeholder="Write your notes here..."></textarea>
+            </div>
 
-  
-  <div class="">
-    <button class="copy-all">Copy all </button>
-  </div>
+            <!-- Timers Tab -->
+            <div v-if="currentTab === 'timers'">
+                <input type="number" v-model="newTimerDuration" placeholder="Timer duration in seconds">
+                <button @click="startNewTimer">Add Timer</button>
 
-  <div class="items">
+                <!-- Active timers -->
+                <div v-for="(timer, index) in activeTimers" :key="index" class="timer">
+                    Timer {{ index + 1 }}: {{ timer.remaining }} seconds
+                    <div>
+                        <button v-if="timer.isRunning" @click="stopTimer(index)">Stop</button>
+                        <button v-else @click="resumeTimer(index)">Resume</button>
+                        <button @click="deleteTimer(index)">Delete</button>
+                    </div>
+                </div>
+            </div>
 
-  </div>
+            <!-- Settings Tab -->
+            <div v-if="currentTab === 'settings'">
+                <label>
+                    <input type="checkbox" v-model="showLeftMinute"> Show left minute
+                </label>
+                <label>
+                    <input type="checkbox" v-model="showListItemCount"> Show list item count
+                </label>
+            </div>
+        </div>
+    </div>
 
-  <!-- <form action="">
-    <textarea name="" id=""></textarea>
-  </form> -->
-  <div class="actions">
-    <button class="reset" id="reset"> Reset</button>
-    <!-- <button class="save" id="save"> Save  </button> -->
-  </div>
+    <script>
+    const app = {
+        data() {
+            return {
+                currentTab: 'list', // Default tab
+                listItems: ['Item 1', 'Item 2', 'Item 3'], // List items
+                noteContent: '', // Notes content
+                newTimerDuration: 0, // New timer duration
+                activeTimers: [], // Active timers
+                showLeftMinute: false, // Option for showing left minute in timer badge
+                showListItemCount: false, // Option for showing list item count in badge
+            };
+        },
 
+        methods: {
+            // Copy text to clipboard
+            copyToClipboard(text) {
+                navigator.clipboard.writeText(text)
+                    .then(() => {
+                        alert(`Copied to clipboard: ${text}`);
+                    })
+                    .catch(err => {
+                        console.error('Failed to copy to clipboard:', err);
+                    });
+            },
 
-  <script type="module" src="popup.js"></script>
+            // Delete a list item
+            deleteListItem(index) {
+                this.listItems.splice(index, 1);
+            },
 
+            // Start a new timer
+            startNewTimer() {
+                if (this.newTimerDuration > 0) {
+                    const timer = {
+                        remaining: this.newTimerDuration,
+                        isRunning: true,
+                        intervalId: setInterval(() => {
+                            this.decrementTimer(timer);
+                        }, 1000),
+                    };
+                    this.activeTimers.push(timer);
+                }
+            },
+
+            // Decrement timer
+            decrementTimer(timer) {
+                if (timer.isRunning) {
+                    timer.remaining--;
+                    if (timer.remaining <= 0) {
+                        clearInterval(timer.intervalId);
+                    }
+                }
+            },
+
+            // Stop a timer
+            stopTimer(index) {
+                const timer = this.activeTimers[index];
+                timer.isRunning = false;
+                clearInterval(timer.intervalId);
+            },
+
+            // Resume a timer
+            resumeTimer(index) {
+                const timer = this.activeTimers[index];
+                timer.isRunning = true;
+                timer.intervalId = setInterval(() => {
+                    this.decrementTimer(timer);
+                }, 1000);
+            },
+
+            // Delete a timer
+            deleteTimer(index) {
+                const timer = this.activeTimers[index];
+                clearInterval(timer.intervalId);
+                this.activeTimers.splice(index, 1);
+            },
+        },
+    };
+
+    Vue.createApp(app).mount('#app');
+    </script>
 </body>
-
 </html>

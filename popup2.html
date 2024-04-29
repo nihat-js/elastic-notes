@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Simple Extension</title>
+  <link rel="stylesheet" type="text/css" href="./css/popup.css">
+  <script src="https://unpkg.com/vue@3.2.47/dist/vue.global.js"></script> <!-- Vue 3 CDN -->
+</head>
+
+<body>
+  <header>
+    <h2 class="title"> Elastic Notes </h2>
+    <img src="./images/logo1.png" alt="" width="32px">
+  </header>
+
+
+  <div class="menu">
+    <p class="menu-tab active" data-tab='list'> List </p>
+    <p class="menu-tab" data-tab='note'> Note </p>
+    <p class="menu-tab" data-tab='timer'> Timer </p>
+  </div>
+
+  
+  <div class="">
+    <button class="copy-all">Copy all (Line by Line) </button>
+    <button class="download-">Download as .md  </button>
+  </div>
+
+  <div class="items">
+
+  </div>
+
+  <!-- <form action="">
+    <textarea name="" id=""></textarea>
+  </form> -->
+  <div class="actions">
+    <button class="reset" id="reset"> Reset</button>
+    <!-- <button class="save" id="save"> Save  </button> -->
+  </div>
+
+
+  <script type="module" src="popup.js"></script>
+
+</body>
+
+</html>
